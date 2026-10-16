@@ -26,7 +26,21 @@ const getEntries = async (lang: LangKey, contentType: string, order: string[]): 
 /** Markdown（Long text フィールド）を HTML に変換する */
 export const markdown = (text?: string): string => (text ? marked.parse(text, { async: false }) : '');
 
-const assetUrl = (asset: any): string | undefined => {
+/** Markdown を meta description 用のプレーンテキストにして maxLength 文字に切り詰める */
+export const excerpt = (text?: string, maxLength = 160): string => {
+  const plain = markdown(text)
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&amp;/g, '&')
+    .replace(/\s+/g, ' ')
+    .trim();
+  return plain.length > maxLength ? `${plain.slice(0, maxLength - 1)}…` : plain;
+};
+
+const assetUrl =(asset: any): string | undefined => {
   const url = asset?.fields?.file?.url;
   return url ? (url.startsWith('//') ? `https:${url}` : url) : undefined;
 };
@@ -99,6 +113,7 @@ export const getBiography = async (lang: LangKey) => {
     email: fields.email as string,
     text: fields.text as string,
     textHtml: markdown(fields.text),
+    description: excerpt(fields.text),
     iconUrl: assetUrl(fields.icon),
   };
 };

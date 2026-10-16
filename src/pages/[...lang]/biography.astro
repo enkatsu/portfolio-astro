@@ -11,7 +11,7 @@ const [biography, awards] = await Promise.all([
   getAwards(lang),
 ]);
 ---
-<Layout lang={lang} title="Biography" description={biography.text}>
+<Layout lang={lang} title="Biography" description={biography.description}>
   <main>
     <div>
       <h1>Biography</h1>
@@ -110,8 +110,10 @@ const [biography, awards] = await Promise.all([
     .biography {
         flex-direction: column;
         .image {
-            width: 350px;
-            height: 350px;
+            width: 100%;
+            max-width: 350px;
+            height: auto;
+            aspect-ratio: 1;
             margin: 0 auto 20px auto;
         }
         .profile {

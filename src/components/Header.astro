@@ -44,7 +44,7 @@ const languages: { lang: LangKey; text: string }[] = [
     <span></span>
   </button>
 </header>
-<div class="hamburgerMenu" id="hamburger-menu">
+<div class="hamburgerMenu" id="hamburger-menu" inert>
   <ul class="items">
     {[{ path: '/', text: 'Top' }, ...links].map((link) => (
       <li class="item">
@@ -65,11 +65,23 @@ const languages: { lang: LangKey; text: string }[] = [
 <script>
   const button = document.querySelector<HTMLButtonElement>('.hamburger');
   const menu = document.getElementById('hamburger-menu');
-  button?.addEventListener('click', () => {
-    const isOpen = button.getAttribute('aria-expanded') !== 'true';
+  const setOpen = (isOpen: boolean) => {
+    if (!button || !menu) return;
     button.setAttribute('aria-expanded', String(isOpen));
     button.setAttribute('aria-label', isOpen ? 'close menu' : 'expand menu');
-    menu?.classList.toggle('active', isOpen);
+    menu.classList.toggle('active', isOpen);
+    // 閉じている間はフォーカス・読み上げの対象から外す
+    menu.inert = !isOpen;
+    document.body.style.overflow = isOpen ? 'hidden' : '';
+  };
+  button?.addEventListener('click', () => {
+    setOpen(button.getAttribute('aria-expanded') !== 'true');
+  });
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && button?.getAttribute('aria-expanded') === 'true') {
+      setOpen(false);
+      button.focus();
+    }
   });
 </script>
 

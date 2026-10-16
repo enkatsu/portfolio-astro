@@ -14,7 +14,7 @@ const ogImage = ogImageUrl ? `${ogImageUrl}?w=1200&h=630&fit=fill` : undefined;
   <main class="container">
     <h1>Project</h1>
     <div class="cards">
-      {projects.map((project) => (
+      {projects.map((project, index) => (
         <div class="card">
           {project.thumbnailUrl && (
             <img
@@ -22,7 +22,8 @@ const ogImage = ogImageUrl ? `${ogImageUrl}?w=1200&h=630&fit=fill` : undefined;
               srcset={`${imageUrl(project.thumbnailUrl, 512, 384)} 1x, ${imageUrl(project.thumbnailUrl, 1024, 768)} 2x`}
               width="512"
               height="384"
-              loading="lazy"
+              loading={index < 4 ? 'eager' : 'lazy'}
+              fetchpriority={index === 0 ? 'high' : undefined}
               decoding="async"
               class="image"
               alt={project.title}
