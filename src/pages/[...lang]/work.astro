@@ -1,0 +1,94 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { langStaticPaths, type LangKey } from '../../lib/i18n';
+import { getExhibitions, getPublications, getWorkshops } from '../../lib/contentful';
+
+export const getStaticPaths = langStaticPaths;
+
+const { lang } = Astro.props as { lang: LangKey };
+const [publications, exhibitions, workshops] = await Promise.all([
+  getPublications(lang),
+  getExhibitions(lang),
+  getWorkshops(lang),
+]);
+---
+<Layout lang={lang} title="Work">
+  <main>
+    <div>
+      <h1>Publication</h1>
+      <ul class="publications">
+        {publications.map((publication) => (
+          <li class="publication">
+            <span>{publication.author}</span>
+            <span>({publication.year})</span><br/>
+            <span>{publication.title}</span><br/>
+            <span>{publication.publisher}</span>
+            {publication.pdfUrl && (
+              <a href={publication.pdfUrl} target="_blank" rel="noreferrer" class="pdf">pdf</a>
+            )}
+          </li>
+        ))}
+      </ul>
+    </div>
+    <div>
+      <h1>Exhibition</h1>
+      <ul class="exhibitions">
+        {exhibitions.map((exhibition) => (
+          <li class="exhibition">
+            <span>"{exhibition.title}"</span>
+            <span>{exhibition.gallery}</span>
+            (<span>{exhibition.startDate}</span> ~ <span>{exhibition.endDate}</span>)
+            {exhibition.links.map((link) => (
+              <a href={link.url} target="_blank" rel="noreferrer" class="link">{link.text}</a>
+            ))}
+          </li>
+        ))}
+      </ul>
+    </div>
+    <div>
+      <h1>Workshop</h1>
+      <ul class="workshops">
+        {workshops.map((workshop) => (
+          <li class="workshop">
+            <span>"{workshop.title}"</span>
+            <span>{workshop.venue}</span>
+            (<span>{workshop.startDate}</span> ~ <span>{workshop.endDate}</span>)
+          </li>
+        ))}
+      </ul>
+    </div>
+  </main>
+</Layout>
+
+<style lang="scss">
+@mixin bracketLink {
+    color: #000;
+    text-decoration: none;
+    margin: 0 3px;
+    padding: 0 3px;
+    &:hover {
+        color: #fff;
+        background: #000;
+    }
+    &::before {
+        content: "[";
+    }
+    &::after {
+        content: "]";
+    }
+}
+
+.publications, .exhibitions, .workshops {
+    padding: 0;
+    list-style: none;
+}
+
+.publication, .exhibition, .workshop {
+    margin-bottom: .75rem;
+}
+
+.publication .pdf,
+.exhibition .link {
+    @include bracketLink;
+}
+</style>

@@ -1,0 +1,62 @@
+---
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import Seo from '../components/Seo.astro';
+import type { LangKey } from '../lib/i18n';
+import '../styles/global.scss';
+
+interface Props {
+  lang: LangKey;
+  title?: string;
+  description?: string;
+  image?: string;
+}
+
+const { lang, title, description, image } = Astro.props;
+const GA_ID = 'G-3GQ691703D';
+---
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="sitemap" type="application/xml" href="/sitemap-index.xml" />
+    <Seo lang={lang} title={title} description={description} image={image} />
+    <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}></script>
+    <script is:inline define:vars={{ GA_ID }}>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', GA_ID);
+    </script>
+  </head>
+  <body>
+    <section>
+      <Header lang={lang} />
+      <div class="container">
+        <slot />
+      </div>
+      <Footer />
+    </section>
+  </body>
+</html>
+
+<style lang="scss">
+@use "../styles/variables" as *;
+
+.container {
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0 85px 25px 85px;
+    min-height: calc(100vh - 4.25rem - 41px);
+    position: relative;
+    width: auto;
+}
+
+@media screen and (max-width: $smartphoneWidth) {
+    .container {
+        padding: 0 15px 25px 15px;
+    }
+}
+</style>

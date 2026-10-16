@@ -1,0 +1,273 @@
+---
+import { toBasePath, toLocalePath, type LangKey } from '../lib/i18n';
+
+interface Props {
+  lang: LangKey;
+}
+
+const { lang } = Astro.props;
+const basePath = toBasePath(Astro.url.pathname);
+const href = (path: string) => toLocalePath(path, lang);
+
+const links = [
+  { path: '/work/', text: 'Work' },
+  { path: '/biography/', text: 'Biography' },
+  { path: '/contact/', text: 'Contact' },
+];
+const languages: { lang: LangKey; text: string }[] = [
+  { lang: 'en', text: 'English' },
+  { lang: 'ja', text: 'Japanese' },
+];
+---
+<header class="header">
+  <div class="left">
+    <a href={href('/')} class="title">Katsuya Endoh</a>
+    <div class="links">
+      {links.map((link) => <a href={href(link.path)} class="link">{link.text}</a>)}
+    </div>
+  </div>
+
+  <div class="languages">
+    {languages.map((language) => (
+      <a href={toLocalePath(basePath, language.lang)} class="language" hreflang={language.lang}>{language.text}</a>
+    ))}
+  </div>
+
+  <button
+    class="hamburger"
+    aria-expanded="false"
+    aria-controls="hamburger-menu"
+    aria-label="expand menu"
+  >
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
+</header>
+<div class="hamburgerMenu" id="hamburger-menu">
+  <ul class="items">
+    {[{ path: '/', text: 'Top' }, ...links].map((link) => (
+      <li class="item">
+        <a href={href(link.path)} class="link">{link.text}</a>
+      </li>
+    ))}
+  </ul>
+
+  <ul class="languageItems">
+    {languages.map((language) => (
+      <li class="languageItem">
+        <a href={toLocalePath(basePath, language.lang)} class="link" hreflang={language.lang}>{language.text}</a>
+      </li>
+    ))}
+  </ul>
+</div>
+
+<script>
+  const button = document.querySelector<HTMLButtonElement>('.hamburger');
+  const menu = document.getElementById('hamburger-menu');
+  button?.addEventListener('click', () => {
+    const isOpen = button.getAttribute('aria-expanded') !== 'true';
+    button.setAttribute('aria-expanded', String(isOpen));
+    button.setAttribute('aria-label', isOpen ? 'close menu' : 'expand menu');
+    menu?.classList.toggle('active', isOpen);
+  });
+</script>
+
+<style lang="scss">
+@use "../styles/variables" as *;
+
+$headerMinHeight: 60px;
+
+@mixin bracketLink {
+    color: #000;
+    text-decoration: none;
+
+    &:hover {
+        color: #fff;
+        background: #000;
+    }
+
+    &::before {
+        content: "[";
+    }
+
+    &::after {
+        content: "]";
+    }
+}
+
+.header {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+
+    background: #fff;
+    border-bottom: 1px solid rgba(0, 0, 0, .2);
+    padding: 0 50px;
+    min-height: $headerMinHeight;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    .left {
+        display: flex;
+        align-items: first baseline;
+
+        .title {
+            @include bracketLink;
+            font-size: 18px;
+            font-weight: 700;
+            margin-right: 10px;
+            padding: 0 5px;
+        }
+
+        .links {
+            .link {
+                @include bracketLink;
+                font-size: 12px;
+                margin: 0 3px;
+                padding: 0 3px;
+            }
+        }
+    }
+
+    .languages {
+        display: flex;
+        align-items: first baseline;
+
+        .language {
+            @include bracketLink;
+            font-size: 12px;
+            padding: 0 3px;
+        }
+    }
+}
+
+.hamburger {
+    display: none;
+    background: none;
+    border: none;
+    position: relative;
+    cursor: pointer;
+    width: 50px;
+    height: 50px;
+    border-radius: 2px;
+
+    span {
+        display: inline-block;
+        position: absolute;
+        left: 14px;
+        height: 3px;
+        border-radius: 2px;
+        background: #000;
+        width: 45%;
+
+        transition: all 0.2s;
+
+        &:nth-of-type(1) {
+            top: 15px;
+        }
+
+        &:nth-of-type(2) {
+            top: 23px;
+        }
+
+        &:nth-of-type(3) {
+            top: 31px;
+        }
+    }
+
+    &[aria-expanded='true'] {
+        span {
+            &:nth-of-type(1) {
+                top: 18px;
+                left: 18px;
+                transform: translateY(6px) rotate(-45deg);
+                width: 30%;
+                transition-delay: 70ms;
+            }
+
+            &:nth-of-type(2) {
+                opacity: 0;
+                transition-delay: 0ms;
+            }
+
+            &:nth-of-type(3) {
+                top: 30px;
+                left: 18px;
+                transform: translateY(-6px) rotate(45deg);
+                width: 30%;
+                transition-delay: 140ms;
+            }
+        }
+    }
+}
+
+.hamburgerMenu {
+    background: rgba(255, 255, 255, 0.8);
+    padding: 80px 0;
+    height: 100%;
+    width: 100%;
+    position: fixed;
+    top: $headerMinHeight;
+    left: 0;
+    z-index: 1;
+
+    transition: transform .3s;
+    transform: translate(0px, 100vh);
+
+    &.active {
+        transform: translate(0px, 0px);
+    }
+
+    .items {
+        list-style: none;
+        padding: 0;
+        margin-bottom: 100px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        .item {
+            .link {
+                @include bracketLink;
+                font-size: 50px;
+            }
+        }
+    }
+
+    .languageItems {
+        list-style: none;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        .languageItem {
+            .link {
+                @include bracketLink;
+                font-size: 30px;
+            }
+        }
+    }
+}
+
+@media screen and (max-width: $smartphoneWidth) {
+    .header {
+        padding: 0 10px;
+
+        .left {
+            .links {
+                display: none;
+            }
+        }
+
+        .languages {
+            display: none;
+        }
+    }
+
+    .hamburger {
+        display: block;
+    }
+}
+</style>

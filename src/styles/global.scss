@@ -1,0 +1,21 @@
+body {
+    background-color: white;
+    margin: 0;
+    font-family: BlinkMacSystemFont,-apple-system,"Segoe UI",Roboto,Oxygen,Ubuntu,Cantarell,"Fira Sans","Droid Sans","Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-weight: 400;
+    line-height: 1.5;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    -webkit-text-size-adjust: 100%;
+    -moz-text-size-adjust: 100%;
+    font-size: 12px;
+
+    p {
+        margin: 0;
+    }
+
+    ::selection {
+        background: #000;
+        color: #fff;
+    }
+}

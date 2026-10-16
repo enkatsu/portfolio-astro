@@ -1,0 +1,177 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { langStaticPaths, type LangKey } from '../../lib/i18n';
+import { getProjects, imageUrl } from '../../lib/contentful';
+
+export const getStaticPaths = langStaticPaths;
+
+const { lang } = Astro.props as { lang: LangKey };
+const projects = await getProjects(lang);
+const ogImageUrl = projects[0]?.thumbnailUrl;
+const ogImage = ogImageUrl ? `${ogImageUrl}?w=1200&h=630&fit=fill` : undefined;
+---
+<Layout lang={lang} image={ogImage}>
+  <main class="container">
+    <h1>Project</h1>
+    <div class="cards">
+      {projects.map((project) => (
+        <div class="card">
+          {project.thumbnailUrl && (
+            <img
+              src={imageUrl(project.thumbnailUrl, 512, 384)}
+              srcset={`${imageUrl(project.thumbnailUrl, 512, 384)} 1x, ${imageUrl(project.thumbnailUrl, 1024, 768)} 2x`}
+              width="512"
+              height="384"
+              loading="lazy"
+              decoding="async"
+              class="image"
+              alt={project.title}
+            />
+          )}
+          <div class="body">
+            <div class="titleAndYear">
+              <strong class="title">{project.title}</strong>
+              <em>{project.year}</em>
+            </div>
+            <div class="collaborators" set:html={project.collaboratorsHtml}></div>
+            <div class="abstruct" set:html={project.abstractHtml}></div>
+            <div class="links">
+              {project.links.map((link) => (
+                <a href={link.url} target="_blank" rel="noreferrer" class="link">[{link.text}]</a>
+              ))}
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  </main>
+</Layout>
+
+<style lang="scss">
+@use "../../styles/variables" as *;
+
+@mixin bracketLink {
+    color: #000;
+    text-decoration: none;
+    &:hover {
+        color: #fff;
+        background: #000;
+    }
+    &::before {
+        content: "[";
+    }
+    &::after {
+        content: "]";
+    }
+}
+
+.container {
+    .cards {
+        $card-width: 24%;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+
+        // 最後の行を左詰めにする
+        &:before{
+            content:"";
+            display: block;
+            width: $card-width;
+            order: 1;
+        }
+        &:after{
+            content:"";
+            display: block;
+            width: $card-width;
+        }
+
+        .card {
+            width: $card-width;
+            box-shadow: none;
+            border: 1px solid rgba(0, 0, 0, .3);
+            border-radius: 0;
+            box-sizing: border-box;
+
+            margin-bottom: 10px;
+            color: #4a4a4a;
+
+            $imageHeight: 240px;
+            $bodyPadding: 10px;
+
+            .image {
+                display: block;
+                width: 100%;
+                height: $imageHeight;
+                object-fit: cover;
+            }
+
+            .body {
+                padding: $bodyPadding;
+                display: flex;
+                flex-direction: column;
+                height: calc(100% - $imageHeight - $bodyPadding * 2);
+
+                .titleAndYear {
+                    margin-bottom: 3px;
+                    .title {
+                        margin-right: 3px;
+                    }
+                }
+
+                // Markdown から生成した要素にはスコープ付きクラスが付かないので :global を使う
+                .collaborators {
+                    margin-bottom: 5px;
+                    :global(a) {
+                        @include bracketLink;
+                    }
+                }
+
+                .abstruct {
+                    margin-bottom: 5px;
+                    :global(a) {
+                        @include bracketLink;
+                    }
+                }
+
+                .links {
+                    margin-top: auto;
+                    display: flex;
+                    flex-wrap: wrap;
+                    .link {
+                        margin: 0 1px;
+                        padding: 0 3px;
+                        color: #000;
+                        text-decoration: none;
+
+                        &:hover {
+                            background: #000;
+                            color: #fff;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@media screen and (max-width: $tabletWidth) {
+    .container {
+        .cards {
+            .card {
+                width: 49%;
+            }
+        }
+    }
+}
+
+@media screen and (max-width: $smartphoneWidth) {
+    .container {
+        .cards {
+            .card {
+                width: 100%;
+                min-height: 400px;
+            }
+        }
+    }
+}
+</style>

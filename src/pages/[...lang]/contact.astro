@@ -1,0 +1,99 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { langStaticPaths, toLocalePath, type LangKey } from '../../lib/i18n';
+
+export const getStaticPaths = langStaticPaths;
+
+const { lang } = Astro.props as { lang: LangKey };
+---
+<Layout lang={lang} title="Contact">
+  <main>
+    <h1>Contact</h1>
+    <form class="form" method="post" action={toLocalePath('/contact/', lang)} name="contact" data-netlify="true">
+      <input type="hidden" name="form-name" value="contact" />
+      <div class="row">
+        <div class="labelContainer">
+          <label for="name">Name</label>
+        </div>
+        <input class="input" type="text" id="name" name="name" required />
+      </div>
+      <div class="row">
+        <div class="labelContainer">
+          <label for="email">Email</label>
+        </div>
+        <input class="input" type="email" id="email" name="email" required />
+      </div>
+      <div class="row">
+        <div class="labelContainer">
+          <label for="content">Message</label>
+        </div>
+        <textarea class="textarea" id="content" name="content" required></textarea>
+      </div>
+      <div class="row">
+        <input class="submit" type="submit" value="Submit" />
+      </div>
+    </form>
+  </main>
+</Layout>
+
+<style lang="scss">
+@use "../../styles/variables" as *;
+
+.form {
+    .row {
+        width: 400px;
+        margin-bottom: 10px;
+
+        .labelContainer {
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+        .input {
+            background-color: #fff;
+            border: solid 1px #000;
+            border-radius: 0;
+            width: 100%;
+            height: 20px;
+            padding: 0;
+        }
+        .textarea {
+            background-color: #fff;
+            border: solid 1px #000;
+            border-radius: 0;
+            width: 100%;
+            height: 180px;
+            padding: 0;
+            resize: none;
+        }
+        .submit {
+            color: #fff;
+            background-color: #000;
+            border: solid 1px transparent;
+            border-radius: 0;
+            width: 100px;
+            height: 30px;
+            text-transform: uppercase;
+
+            &:hover {
+                color: #000;
+                background-color: #fff;
+                border: solid 1px #000;
+            }
+
+            &:active {
+                color: #000;
+                background-color: #ddd;
+                border: solid 1px #000;
+            }
+        }
+    }
+}
+
+@media screen and (max-width: $smartphoneWidth) {
+    .form {
+        .row {
+            width: 100%;
+        }
+    }
+}
+</style>

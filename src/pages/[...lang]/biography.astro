@@ -1,0 +1,123 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { langStaticPaths, type LangKey } from '../../lib/i18n';
+import { getAwards, getBiography, imageUrl } from '../../lib/contentful';
+
+export const getStaticPaths = langStaticPaths;
+
+const { lang } = Astro.props as { lang: LangKey };
+const [biography, awards] = await Promise.all([
+  getBiography(lang),
+  getAwards(lang),
+]);
+---
+<Layout lang={lang} title="Biography" description={biography.text}>
+  <main>
+    <div>
+      <h1>Biography</h1>
+      <div class="biography">
+        {biography.iconUrl && (
+          <img
+            src={imageUrl(biography.iconUrl, 350, 350)}
+            srcset={`${imageUrl(biography.iconUrl, 350, 350)} 1x, ${imageUrl(biography.iconUrl, 700, 700)} 2x`}
+            width="350"
+            height="350"
+            class="image"
+            alt="profile"
+          />
+        )}
+        <div class="profile">
+          <h2 class="name">{biography.name}</h2>
+          <div>{biography.job}</div>
+          <div set:html={biography.textHtml}></div>
+          <div class="links">
+            <a class="link" href="https://github.com/enkatsu" target="_blank" rel="noreferrer">GitHub</a>
+            <a class="link" href="https://twitter.com/KatsuyaEndoh" target="_blank" rel="noreferrer">Twitter</a>
+            <a class="link" href="https://blog.enkatsu.org/" target="_blank" rel="noreferrer">Blog</a>
+          </div>
+          <div>{biography.email}</div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <h2>Award</h2>
+      <ul class="awards">
+        {awards.map((award) => (
+          <li class="award">
+            <span class="year">{award.year}</span>
+            <span class="name">{award.name}</span>
+            <strong>{award.prize}</strong>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </main>
+</Layout>
+
+<style lang="scss">
+@use "../../styles/variables" as *;
+
+.biography {
+    display: flex;
+    .image {
+        width: 170px;
+        height: 170px;
+        object-fit: cover;
+    }
+    .profile {
+        .name {
+            margin: 0;
+        }
+        padding-left: 50px;
+        width: 40%;
+
+        .links {
+            .link {
+                color: #000;
+                text-decoration: none;
+                margin: 0 3px;
+                padding: 0 3px;
+                &:hover {
+                    background: #000;
+                    color: #fff;
+                }
+                &::before {
+                    content: "[";
+                }
+                &::after {
+                    content: "]";
+                }
+            }
+        }
+    }
+}
+
+.awards {
+    list-style: none;
+    padding: 0;
+    .award {
+        margin-bottom: .75rem;
+        .year {
+            margin-right: 5px;
+        }
+        .name {
+            margin-right: 5px;
+        }
+    }
+}
+
+@media screen and (max-width: $smartphoneWidth) {
+    .biography {
+        flex-direction: column;
+        .image {
+            width: 350px;
+            height: 350px;
+            margin: 0 auto 20px auto;
+        }
+        .profile {
+            padding: 0;
+            width: 100%;
+        }
+    }
+}
+</style>
