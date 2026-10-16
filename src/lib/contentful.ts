@@ -9,7 +9,7 @@ const client = createClient({
 
 export type Link = { text: string; url: string };
 
-// Contentful のフィールドはローカライズされていないと欠けることがあるので緩く扱う
+// Contentful fields may be missing when not localized, so type them loosely
 type Fields = Record<string, any>;
 
 const getEntries = async (lang: LangKey, contentType: string, order: string[]): Promise<Fields[]> => {
@@ -23,10 +23,10 @@ const getEntries = async (lang: LangKey, contentType: string, order: string[]): 
   return entries.items.map((item) => item.fields as Fields);
 };
 
-/** Markdown（Long text フィールド）を HTML に変換する */
+/** Convert Markdown (Long text fields) to HTML */
 export const markdown = (text?: string): string => (text ? marked.parse(text, { async: false }) : '');
 
-/** Markdown を meta description 用のプレーンテキストにして maxLength 文字に切り詰める */
+/** Convert Markdown to plain text for meta descriptions, truncated to maxLength characters */
 export const excerpt = (text?: string, maxLength = 160): string => {
   const plain = markdown(text)
     .replace(/<[^>]*>/g, ' ')
@@ -45,7 +45,7 @@ const assetUrl =(asset: any): string | undefined => {
   return url ? (url.startsWith('//') ? `https:${url}` : url) : undefined;
 };
 
-/** Contentful Images API でリサイズした画像 URL */
+/** Image URL resized via the Contentful Images API */
 export const imageUrl = (url: string, width: number, height: number): string => (
   `${url}?w=${width}&h=${height}&fit=fill&fm=webp`
 );

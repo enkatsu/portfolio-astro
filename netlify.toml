@@ -5,7 +5,7 @@
 [build.environment]
   NODE_VERSION = "24.18.0"
 
-# Gatsby 版（gatsby-plugin-netlify）が付けていたセキュリティヘッダーを引き継ぐ
+# Carry over the security headers added by the Gatsby version (gatsby-plugin-netlify)
 [[headers]]
   for = "/*"
   [headers.values]
@@ -14,7 +14,7 @@
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "same-origin"
 
-# ハッシュ付きファイル名のアセットは長期キャッシュ
+# Cache hashed asset filenames long-term
 [[headers]]
   for = "/_astro/*"
   [headers.values]

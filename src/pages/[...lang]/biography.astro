@@ -23,7 +23,7 @@ const [biography, awards] = await Promise.all([
             width="350"
             height="350"
             class="image"
-            alt="profile"
+            alt={lang === 'ja' ? `${biography.name}のポートレート` : `Portrait of ${biography.name}`}
           />
         )}
         <div class="profile">

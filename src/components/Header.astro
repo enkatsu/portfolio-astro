@@ -70,7 +70,7 @@ const languages: { lang: LangKey; text: string }[] = [
     button.setAttribute('aria-expanded', String(isOpen));
     button.setAttribute('aria-label', isOpen ? 'close menu' : 'expand menu');
     menu.classList.toggle('active', isOpen);
-    // 閉じている間はフォーカス・読み上げの対象から外す
+    // Keep the closed menu out of the focus order and the accessibility tree
     menu.inert = !isOpen;
     document.body.style.overflow = isOpen ? 'hidden' : '';
   };

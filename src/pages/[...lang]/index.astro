@@ -73,7 +73,7 @@ const ogImage = ogImageUrl ? `${ogImageUrl}?w=1200&h=630&fit=fill` : undefined;
         flex-wrap: wrap;
         justify-content: space-between;
 
-        // 最後の行を左詰めにする
+        // Left-align the items in the last row
         &:before{
             content:"";
             display: block;
@@ -119,7 +119,7 @@ const ogImage = ogImageUrl ? `${ogImageUrl}?w=1200&h=630&fit=fill` : undefined;
                     }
                 }
 
-                // Markdown から生成した要素にはスコープ付きクラスが付かないので :global を使う
+                // Elements generated from Markdown don't get scoped classes, so use :global
                 .collaborators {
                     margin-bottom: 5px;
                     :global(a) {

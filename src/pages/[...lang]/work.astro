@@ -11,6 +11,13 @@ const [publications, exhibitions, workshops] = await Promise.all([
   getExhibitions(lang),
   getWorkshops(lang),
 ]);
+
+/** Show a single date when the end date is missing or the same as the start date */
+const dateRange = (startDate: string, endDate: string): string => (
+  !endDate || startDate === endDate
+    ? startDate
+    : `${startDate}${lang === 'ja' ? ' ~ ' : '–'}${endDate}`
+);
 ---
 <Layout lang={lang} title="Work">
   <main>
@@ -37,7 +44,7 @@ const [publications, exhibitions, workshops] = await Promise.all([
           <li class="exhibition">
             <span>"{exhibition.title}"</span>
             <span>{exhibition.gallery}</span>
-            (<span>{exhibition.startDate}</span> ~ <span>{exhibition.endDate}</span>)
+            (<span>{dateRange(exhibition.startDate, exhibition.endDate)}</span>)
             {exhibition.links.map((link) => (
               <a href={link.url} target="_blank" rel="noreferrer" class="link">{link.text}</a>
             ))}
@@ -52,7 +59,7 @@ const [publications, exhibitions, workshops] = await Promise.all([
           <li class="workshop">
             <span>"{workshop.title}"</span>
             <span>{workshop.venue}</span>
-            (<span>{workshop.startDate}</span> ~ <span>{workshop.endDate}</span>)
+            (<span>{dateRange(workshop.startDate, workshop.endDate)}</span>)
           </li>
         ))}
       </ul>
